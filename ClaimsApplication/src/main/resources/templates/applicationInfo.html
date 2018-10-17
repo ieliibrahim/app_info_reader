@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- Meta, title, CSS, favicons, etc. -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Application Info Input</title>
+
+<link th:href="@{vendors/bootstrap/dist/css/bootstrap.min.css}"
+	rel="stylesheet" />
+
+<!-- Font Awesome -->
+<link th:href="@{vendors/font-awesome/css/font-awesome.min.css}"
+	rel="stylesheet" />
+<link th:href="@{css/app_info.css}" rel="stylesheet" />
+<link th:href="@{css/bootstrap.fd.css}" rel="stylesheet" />
+
+<!-- jQuery -->
+<script type="text/javascript" th:src="@{vendors/jquery/dist/jquery.js}"></script>
+<script type="text/javascript"
+	th:src="@{vendors/bootstrap/dist/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{js/bootstrap.fd.js}"></script>
+</head>
+
+
+<body class="nav-md">
+
+	<div class="container body">
+		<div class="main_container">
+			<div class="row">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<div class="x_panel">
+						<div class="x_title">
+							<h2>Application Info</h2>
+							<div class="clearfix"></div>
+						</div>
+						<div class="x_content">
+							<br />
+							<form id="previewFormId" th:action="@{/previewOutput}"
+								th:object="${applicationInfo}" method="POST"
+								class="form-horizontal form-label-left">
+
+								<div class="form-group">
+									<label class="control-label col-md-3 col-sm-3 col-xs-12"
+										for="input">Input:<span class="required">*</span>
+									</label>
+									<div class="col-md-4 col-sm-4 col-xs-8">
+										<input type="text" id="input" required="required"
+											placeholder="Enter path to the office action file"
+											class="form-control col-md-7 col-xs-12">
+										<button class="btn btn-primary" type="button"
+											id="uploadInputID">
+											<i class="fa fa-upload"></i> Browse
+										</button>
+									</div>
+								</div>
+
+								<div class="form-group">
+
+									<label th:if="${#fields.hasErrors('applicationFor')}"
+										th:errors="*{applicationFor}" class="validation-message"></label>
+									<label class="control-label col-md-3 col-sm-3 col-xs-12"
+										for="applicationFor">For: <span class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input type="text" id="applicationFor" required="required"
+											th:field="*{applicationFor}"
+											placeholder="Enter Application title" name="applicationFor"
+											class="form-control col-md-7 col-xs-12">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label th:if="${#fields.hasErrors('number')}"
+										th:errors="*{number}" class="validation-message"></label> <label
+										class="control-label col-md-3 col-sm-3 col-xs-12" for="number">Application
+										Number: <span class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input type="text" id="number" required="required"
+											placeholder="Enter Application number" th:field="*{number}"
+											class="form-control col-md-7 col-xs-12"
+											th:value="${applicationInfo.number}">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label th:if="${#fields.hasErrors('applicant')}"
+										th:errors="*{applicant}" class="validation-message"></label> <label
+										class="control-label col-md-3 col-sm-3 col-xs-12"
+										for="applicant">Applicant: <span class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input type="text" id="applicant" required="required"
+											placeholder="Enter applicant number" th:field="*{applicant}"
+											class="form-control col-md-7 col-xs-12">
+									</div>
+								</div>
+
+								<center>
+									<img th:src="@{/images/loader.gif}" id="loading-indicator"
+										style="display: none" />
+								</center>
+								<div class="form-group">
+									<label th:if="${#fields.hasErrors('examiner')}"
+										th:errors="*{examiner}" class="validation-message"></label> <label
+										class="control-label col-md-3 col-sm-3 col-xs-12"
+										for="examiner">Examiner: <span class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input type="text" id="examiner" required="required"
+											placeholder="Enter examiner name" th:field="*{examiner}"
+											class="form-control col-md-7 col-xs-12">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label th:if="${#fields.hasErrors('fieldDate')}"
+										th:errors="*{fieldDate}" class="validation-message"></label> <label
+										class="control-label col-md-3 col-sm-3 col-xs-12">Field
+										Date: <span class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input id="fieldDate" th:field="*{fieldDate}"
+											class="date-picker form-control col-md-7 col-xs-12"
+											placeholder="Enter field date" required="required"
+											type="text">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label th:if="${#fields.hasErrors('groupArtUnit')}"
+										th:errors="*{groupArtUnit}" class="validation-message"></label>
+									<label class="control-label col-md-3 col-sm-3 col-xs-12"
+										for="groupArtUnit">Group Art Unit: <span
+										class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input type="text" id="groupArtUnit" required="required"
+											placeholder="Enter Group art unit number"
+											th:field="*{groupArtUnit}"
+											class="form-control col-md-7 col-xs-12">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label th:if="${#fields.hasErrors('confirmationNumber')}"
+										th:errors="*{confirmationNumber}" class="validation-message"></label>
+									<label class="control-label col-md-3 col-sm-3 col-xs-12"
+										for="confirmationNumber">Confirmation Number: <span
+										class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input type="text" id="confirmationNumber" required="required"
+											th:field="*{confirmationNumber}"
+											placeholder="Enter confirmation number"
+											class="form-control col-md-7 col-xs-12">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label th:if="${#fields.hasErrors('attorneyDocketNumber')}"
+										th:errors="*{attorneyDocketNumber}" class="validation-message"></label>
+									<label class="control-label col-md-3 col-sm-3 col-xs-12"
+										for="attorneyDocketNumber">Attorney Docket Number: <span
+										class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input type="text" id="attorneyDocketNumber"
+											required="required" th:field="*{attorneyDocketNumber}"
+											placeholder="Enter attorney docket number"
+											class="form-control col-md-7 col-xs-12">
+									</div>
+								</div>
+
+								<div class="x_title">
+									<h2>Claim Section</h2>
+									<div class="clearfix"></div>
+								</div>
+
+								<div class="form-group">
+									<label th:if="${#fields.hasErrors('claim.totalNumber')}"
+										th:errors="*{claim.totalNumber}" class="validation-message"></label>
+									<label class="control-label col-md-3 col-sm-3 col-xs-12"
+										for="claim.totalNumber">Total Number of Claims: <span
+										class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input type="number" id="totalNumberId" required="required"
+											th:field="*{claim.totalNumber}"
+											placeholder="Enter total number of claims"
+											class="form-control col-md-7 col-xs-12">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="x_title">
+										<h4 style="font-weight: bold;">Allowed Claims:</h4>
+										<div class="clearfix"></div>
+									</div>
+									<label th:if="${#fields.hasErrors('claim.allowedNumber')}"
+										th:errors="*{claim.allowedNumber}" class="validation-message"></label>
+									<label class="control-label col-md-3 col-sm-3 col-xs-12"
+										for="claim.allowedNumber">Claim Numbers: <span
+										class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input type="number" id="allowedNumberId" required="required"
+											th:field="*{claim.allowedNumber}"
+											placeholder="Enter allowed claims number"
+											class="form-control col-md-7 col-xs-12">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="x_title">
+										<h4 style="font-weight: bold;">Objected Claims:</h4>
+										<div class="clearfix"></div>
+									</div>
+									<label th:if="${#fields.hasErrors('claim.objectedNumber')}"
+										th:errors="*{claim.objectedNumber}" class="validation-message"></label>
+									<label class="control-label col-md-3 col-sm-3 col-xs-3"
+										for="claim.objectedNumber">Claim Numbers: <span
+										class="required">*</span>
+									</label>
+									<div class="col-md-2 col-sm-2 col-xs-2">
+										<input type="text" id="objectedNumberId" required="required"
+											th:field="*{claim.objectedNumber}"
+											class="form-control col-md-2 col-xs-2">
+									</div>
+
+									<label th:if="${#fields.hasErrors('claim.objectedStatue')}"
+										th:errors="*{claim.objectedStatue}" class="validation-message"></label>
+									<label class="control-label col-md-1 col-sm-1 col-xs-1"
+										for="claim.objectedStatue">Statue: <span
+										class="required">*</span>
+									</label>
+									<div class="col-md-2 col-sm-2 col-xs-2">
+										<input type="text" id="objectedStatueId" required="required"
+											th:field="*{claim.objectedStatue}"
+											class="form-control col-md-2 col-xs-2">
+									</div>
+
+								</div>
+
+								<div class="form-group">
+									<div class="x_title">
+										<h4 style="font-weight: bold;">Rejected Claims:</h4>
+										<div class="clearfix"></div>
+									</div>
+
+
+									<div id="dymanicRejectedClaimsId"></div>
+
+
+								</div>
+
+
+								<div class="form-group">
+									<div class="x_title">
+										<h4 style="font-weight: bold;">Allowable Claims:</h4>
+										<div class="clearfix"></div>
+									</div>
+									<label th:if="${#fields.hasErrors('claim.allowableClaims')}"
+										th:errors="*{claim.allowableClaims}"
+										class="validation-message"></label> <label
+										class="control-label col-md-3 col-sm-3 col-xs-12"
+										for="claim.allowableClaims">Claim Numbers: <span
+										class="required">*</span>
+									</label>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<input type="text" id="allowableClaimsId" required="required"
+											th:field="*{claim.allowableClaims}"
+											class="form-control col-md-7 col-xs-12">
+									</div>
+								</div>
+
+								<div class="ln_solid"></div>
+								<div class="form-group">
+									<div class="col-md-3 col-sm-3 col-xs-3 col-md-offset-3">
+										<button class="btn btn-danger" type="reset">
+											<i class="fa fa-remove"></i> Reset
+										</button>
+										<button type="submit" class="btn btn-success">
+											<i class="fa fa-eye"></i>Preview
+										</button>
+									</div>
+								</div>
+
+								<div class="ln_solid"></div>
+								<div class="form-group">
+									<div class="col-md-7 col-sm-7 col-xs-7 col-md-offset-7">
+										<button class="btn btn-primary" type="button">
+											<i class="fa fa-plus"></i> Click to add more fields?
+										</button>
+									</div>
+								</div>
+
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+		$(document)
+				.ready(
+						function() {
+							$("#allowedNumberId")
+									.focusout(
+											function() {
+												var clamisTotal = $(
+														'#totalNumberId').val();
+												var allowedClaims = $(
+														'#allowedNumberId')
+														.val();
+
+												var newFieldsCount = clamisTotal
+														- allowedClaims;
+
+												$("#dymanicRejectedClaimsId")
+														.empty();
+
+												for (i = 0; i < newFieldsCount; i++) {
+
+													$(
+															"#dymanicRejectedClaimsId")
+															.append(
+																	"<div class='form-group'>"
+																			+ "<label class='control-label col-md-3 col-sm-3 col-xs-3' for='claim.objectedNumber'>Claim Numbers: <span	class='required'>*</span></label>"
+																			+ "<div class='col-md-1 col-sm-1 col-xs-1'><input type='text' required='required' th:field='*{claim.rejectedClaims[0].claimNumbers}' class='form-control col-md-1 col-xs-1'></div>"
+																			+ "<label class='control-label col-md-1 col-sm-1 col-xs-1' for='claim.objectedStatue'>Statue: <span class='required'>*</span></label>"
+																			+ "<div class='col-md-1 col-sm-1 col-xs-1'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].claimStatue}'  class='form-control col-md-1 col-xs-1'></div>"
+																			+ "<label class='control-label col-md-1 col-sm-1 col-xs-1' for='claim.objectedStatue'>Reference: <span class='required'>*</span></label>"
+																			+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].references[0].name}' placeholder='Reference "
+																			+ (i + 1)
+																			+ "' class='form-control col-md-2 col-xs-2'></div>"
+																			+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].references[0].publicationNumber}' placeholder='Publication No "
+																			+ (i + 1)
+																			+ "' class='form-control col-md-2 col-xs-2'></div>"
+																			+ "<div class='col-md-1 col-sm-1 col-xs-1'><button class='btn btn-primary' type='button'> <i class='fa fa-plus'></i>Add more reference? </button></div>"
+																			+ "</div>");
+
+												}
+											});
+						});
+	</script>
+
+
+	<script>
+		$(document)
+				.ready(
+						function() {
+							$("#uploadInputID")
+									.click(
+											function() {
+
+												$
+														.FileDialog({
+															multiple : true
+														})
+														.on(
+																'files.bs.filedialog',
+																function(ev) {
+																	var files = ev.files;
+
+																	var data = new FormData();
+																	for (var i = 0; i < files.length; i++) {
+																		data
+																				.append(
+																						'input',
+																						files[i]);
+																	}
+																	$
+																			.ajax({
+																				url : "/uploadAppInfoPDF",
+																				type : "POST",
+																				data : data,
+																				contentType : false,
+																				processData : false,
+																				success : function(
+																						result) {
+
+																					$(
+																							'#input')
+																							.val(
+																									files[0].name);
+																					$(
+																							'#number')
+																							.val(
+																									result.number);
+																					$(
+																							'#applicant')
+																							.val(
+																									result.applicant);
+																					$(
+																							'#examiner')
+																							.val(
+																									result.examiner);
+																					$(
+																							'#fieldDate')
+																							.val(
+																									result.fieldDate);
+																					$(
+																							'#groupArtUnit')
+																							.val(
+																									result.groupArtUnit);
+																					$(
+																							'#confirmationNumber')
+																							.val(
+																									result.confirmationNumber);
+																					$(
+																							'#attorneyDocketNumber')
+																							.val(
+																									result.attorneyDocketNumber);
+
+																					$(
+																							'#totalNumberId')
+																							.val(
+																									result.totalNumOfClaims);
+
+																					$(
+																							'#allowedNumberId')
+																							.val(
+																									result.allowedClaimsNumbers);
+
+																					$(
+																							'#allowableClaimsId')
+																							.val(
+																									result.allowableClaims);
+
+																					for (i = 0; i < result.groupsClaimsTotal; i++) {
+
+																						$(
+																								"#dymanicRejectedClaimsId")
+																								.append(
+																										"<div class='form-group'>"
+																												+ "<label class='control-label col-md-3 col-sm-3 col-xs-3' for='claim.objectedNumber'>Claim Numbers: <span	class='required'>*</span></label>"
+																												+ "<div class='col-md-1 col-sm-1 col-xs-1'><input type='text' required='required' th:field='*{claim.rejectedClaims[0].claimNumbers}' class='form-control col-md-1 col-xs-1' value=" + result.claimsNumbersAsStr[i] + "></div>"
+																												+ "<label class='control-label col-md-1 col-sm-1 col-xs-1' for='claim.objectedStatue'>Statue: <span class='required'>*</span></label>"
+																												+ "<div class='col-md-1 col-sm-1 col-xs-1'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].claimStatue}'  class='form-control col-md-1 col-xs-1'></div>"
+																												+ "<label class='control-label col-md-1 col-sm-1 col-xs-1' for='claim.objectedStatue'>Reference: <span class='required'>*</span></label>"
+																												+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].references[0].name}' placeholder='Reference "
+																												+ (i + 1)
+																												+ "' class='form-control col-md-2 col-xs-2'></div>"
+																												+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].references[0].publicationNumber}' placeholder='Publication No "
+																												+ (i + 1)
+																												+ "' class='form-control col-md-2 col-xs-2'></div>"
+																												+ "<div class='col-md-1 col-sm-1 col-xs-1'><button class='btn btn-primary' type='button'> <i class='fa fa-plus'></i>Add more reference? </button></div>"
+																												+ "</div>");
+
+																					}
+
+																				},
+																				error : function(
+																						err) {
+																					alert('Error reading file, please contact administrator')
+																				}
+																			});
+																})
+														.on(
+																'cancel.bs.filedialog',
+																function(ev) {
+																});
+											});
+						});
+
+		$(document).ajaxSend(function(event, request, settings) {
+			$('#loading-indicator').show();
+		});
+
+		$(document).ajaxComplete(function(event, request, settings) {
+			$('#loading-indicator').hide();
+		});
+	</script>
+
+</body>
+
+
+</html>
