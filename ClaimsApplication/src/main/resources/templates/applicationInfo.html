@@ -39,7 +39,7 @@
 						</div>
 						<div class="x_content">
 							<br />
-							<form id="previewFormId" th:action="@{/previewOutput}"
+							<form id="previewFormId" th:action="@{/generate}"
 								th:object="${applicationInfo}" method="POST"
 								class="form-horizontal form-label-left">
 
@@ -47,10 +47,12 @@
 									<label class="control-label col-md-3 col-sm-3 col-xs-12"
 										for="input">Input:<span class="required">*</span>
 									</label>
-									<div class="col-md-4 col-sm-4 col-xs-8">
+									<div class="col-md-5 col-sm-5 col-xs-5">
 										<input type="text" id="input" required="required"
 											placeholder="Enter path to the office action file"
 											class="form-control col-md-7 col-xs-12">
+									</div>
+									<div class="col-md-1 col-sm-1 col-xs-1">
 										<button class="btn btn-primary" type="button"
 											id="uploadInputID">
 											<i class="fa fa-upload"></i> Browse
@@ -281,24 +283,15 @@
 								<div class="ln_solid"></div>
 								<div class="form-group">
 									<div class="col-md-3 col-sm-3 col-xs-3 col-md-offset-3">
-										<button class="btn btn-danger" type="reset">
+										<button class="btn btn-danger" type="reset"
+											onclick="removeData();">
 											<i class="fa fa-remove"></i> Reset
 										</button>
 										<button type="submit" class="btn btn-success">
-											<i class="fa fa-eye"></i>Preview
+											<i class="fa fa-eye"></i>Generate
 										</button>
 									</div>
 								</div>
-
-								<div class="ln_solid"></div>
-								<div class="form-group">
-									<div class="col-md-7 col-sm-7 col-xs-7 col-md-offset-7">
-										<button class="btn btn-primary" type="button">
-											<i class="fa fa-plus"></i> Click to add more fields?
-										</button>
-									</div>
-								</div>
-
 							</form>
 						</div>
 					</div>
@@ -307,51 +300,6 @@
 
 		</div>
 	</div>
-
-
-	<script type="text/javascript">
-		$(document)
-				.ready(
-						function() {
-							$("#allowedNumberId")
-									.focusout(
-											function() {
-												var clamisTotal = $(
-														'#totalNumberId').val();
-												var allowedClaims = $(
-														'#allowedNumberId')
-														.val();
-
-												var newFieldsCount = clamisTotal
-														- allowedClaims;
-
-												$("#dymanicRejectedClaimsId")
-														.empty();
-
-												for (i = 0; i < newFieldsCount; i++) {
-
-													$(
-															"#dymanicRejectedClaimsId")
-															.append(
-																	"<div class='form-group'>"
-																			+ "<label class='control-label col-md-3 col-sm-3 col-xs-3' for='claim.objectedNumber'>Claim Numbers: <span	class='required'>*</span></label>"
-																			+ "<div class='col-md-1 col-sm-1 col-xs-1'><input type='text' required='required' th:field='*{claim.rejectedClaims[0].claimNumbers}' class='form-control col-md-1 col-xs-1'></div>"
-																			+ "<label class='control-label col-md-1 col-sm-1 col-xs-1' for='claim.objectedStatue'>Statue: <span class='required'>*</span></label>"
-																			+ "<div class='col-md-1 col-sm-1 col-xs-1'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].claimStatue}'  class='form-control col-md-1 col-xs-1'></div>"
-																			+ "<label class='control-label col-md-1 col-sm-1 col-xs-1' for='claim.objectedStatue'>Reference: <span class='required'>*</span></label>"
-																			+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].references[0].name}' placeholder='Reference "
-																			+ (i + 1)
-																			+ "' class='form-control col-md-2 col-xs-2'></div>"
-																			+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].references[0].publicationNumber}' placeholder='Publication No "
-																			+ (i + 1)
-																			+ "' class='form-control col-md-2 col-xs-2'></div>"
-																			+ "<div class='col-md-1 col-sm-1 col-xs-1'><button class='btn btn-primary' type='button'> <i class='fa fa-plus'></i>Add more reference? </button></div>"
-																			+ "</div>");
-
-												}
-											});
-						});
-	</script>
 
 
 	<script>
@@ -443,17 +391,24 @@
 																								.append(
 																										"<div class='form-group'>"
 																												+ "<label class='control-label col-md-3 col-sm-3 col-xs-3' for='claim.objectedNumber'>Claim Numbers: <span	class='required'>*</span></label>"
-																												+ "<div class='col-md-1 col-sm-1 col-xs-1'><input type='text' required='required' th:field='*{claim.rejectedClaims[0].claimNumbers}' class='form-control col-md-1 col-xs-1' value=" + result.claimsNumbersAsStr[i] + "></div>"
+																												+ "<div class='col-md-1 col-sm-1 col-xs-1'><input type='text' required='required' th:field='*{claim.rejectedClaims[" + i + "].claimNumbers}' class='form-control col-md-1 col-xs-1' value=" + result.claimsNumbersAsStr[i] + "></div>"
 																												+ "<label class='control-label col-md-1 col-sm-1 col-xs-1' for='claim.objectedStatue'>Statue: <span class='required'>*</span></label>"
-																												+ "<div class='col-md-1 col-sm-1 col-xs-1'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].claimStatue}'  class='form-control col-md-1 col-xs-1'></div>"
+																												+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[" + i + "].claimStatue}'  class='form-control col-md-2 col-xs-2' value=" + result.claimsStatueAsStr[i] + "></div>"
 																												+ "<label class='control-label col-md-1 col-sm-1 col-xs-1' for='claim.objectedStatue'>Reference: <span class='required'>*</span></label>"
-																												+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].references[0].name}' placeholder='Reference "
+																												+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims["
+																												+ i
+																												+ "].name}' placeholder='Reference "
 																												+ (i + 1)
-																												+ "' class='form-control col-md-2 col-xs-2'></div>"
-																												+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims[0].references[0].publicationNumber}' placeholder='Publication No "
+																												+ "' class='form-control col-md-2 col-xs-2' value="
+																												+ result.claimsReferenceAsStr[i]
+																												+ "></div>"
+																												+ "<div class='col-md-2 col-sm-2 col-xs-2'><input type='text' id='objectedStatueId' required='required' th:field='*{claim.rejectedClaims["
+																												+ i
+																												+ "].publicationNumber}' placeholder='Publication No "
 																												+ (i + 1)
-																												+ "' class='form-control col-md-2 col-xs-2'></div>"
-																												+ "<div class='col-md-1 col-sm-1 col-xs-1'><button class='btn btn-primary' type='button'> <i class='fa fa-plus'></i>Add more reference? </button></div>"
+																												+ "' class='form-control col-md-2 col-xs-2' value="
+																												+ result.claimsPubNumAsStr[i]
+																												+ "></div>"
 																												+ "</div>");
 
 																					}
@@ -479,6 +434,12 @@
 		$(document).ajaxComplete(function(event, request, settings) {
 			$('#loading-indicator').hide();
 		});
+	</script>
+
+	<script type="text/javascript">
+		function removeData() {
+			$('#dymanicRejectedClaimsId').empty();
+		}
 	</script>
 
 </body>

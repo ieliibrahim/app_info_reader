@@ -87,6 +87,15 @@ public class ApplicationInfo {
 	private List<String> claimsNumbersAsStr;
 
 	@Transient
+	private List<String> claimsStatueAsStr;
+
+	@Transient
+	private List<String> claimsReferenceAsStr;
+
+	@Transient
+	private List<String> claimsPubNumAsStr;
+
+	@Transient
 	private int groupsClaimsTotal;
 
 	public Integer getApplicationId() {
@@ -239,6 +248,30 @@ public class ApplicationInfo {
 
 	public void setGroupsClaimsTotal(int groupsClaimsTotal) {
 		this.groupsClaimsTotal = groupsClaimsTotal;
+	}
+
+	public List<String> getClaimsStatueAsStr() {
+		return claimsStatueAsStr;
+	}
+
+	public void setClaimsStatueAsStr(List<String> claimsStatueAsStr) {
+		this.claimsStatueAsStr = claimsStatueAsStr;
+	}
+
+	public List<String> getClaimsReferenceAsStr() {
+		return claimsReferenceAsStr;
+	}
+
+	public void setClaimsReferenceAsStr(List<String> claimsReferenceAsStr) {
+		this.claimsReferenceAsStr = claimsReferenceAsStr;
+	}
+
+	public List<String> getClaimsPubNumAsStr() {
+		return claimsPubNumAsStr;
+	}
+
+	public void setClaimsPubNumAsStr(List<String> claimsPubNumAsStr) {
+		this.claimsPubNumAsStr = claimsPubNumAsStr;
 	}
 
 }

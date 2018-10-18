@@ -1,15 +1,10 @@
 package com.ieli.claims.model.app;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
@@ -33,12 +28,14 @@ public class RejectedClaims {
 	@NotEmpty(message = "*Please provide claim statue")
 	private String claimStatue;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "rejected_claims_id")
-	private Set<Reference> references;
+	@Column(name = "name")
+	@NotEmpty(message = "*Please provide reference name")
+	private String name;
 
-	
-	
+	@Column(name = "publication_number")
+	@NotEmpty(message = "*Please provide publication number")
+	private String publicationNumber;
+
 	public RejectedClaims(@NotEmpty(message = "*Please provide claim numbers") Integer claimNumbers,
 			@NotEmpty(message = "*Please provide claim statue") String claimStatue) {
 		super();
@@ -70,12 +67,20 @@ public class RejectedClaims {
 		this.claimStatue = claimStatue;
 	}
 
-	public Set<Reference> getReferences() {
-		return references;
+	public String getName() {
+		return name;
 	}
 
-	public void setReferences(Set<Reference> references) {
-		this.references = references;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getPublicationNumber() {
+		return publicationNumber;
+	}
+
+	public void setPublicationNumber(String publicationNumber) {
+		this.publicationNumber = publicationNumber;
 	}
 
 }

@@ -52,10 +52,17 @@ public class ApplicationInfoController {
 		try {
 			applicationInfo = iPDFParser.getPDFConent(pdfFile.getInputStream());
 
-			List<Integer> claimsNumbers = new ArrayList<Integer>();
+			List<List<Integer>> claimsNumbers = new ArrayList<List<Integer>>();
 			List<String> claimsNumbersAsStr = new ArrayList<String>();
+			List<String> claimsStatueAsStr = new ArrayList<String>();
+
+			List<String> claimsReferenceAsStr = new ArrayList<String>();
+			List<String> claimsPubNumAsStr = new ArrayList<String>();
 
 			String claimsLine = "";
+			String statueLine = "";
+			String referenceLine = "";
+			String pubNumLine = "";
 			String[] numbersLineArr = null;
 			for (String str : applicationInfo.getSubTitles()) {
 
@@ -66,18 +73,44 @@ public class ApplicationInfoController {
 				for (int i = 0; i < numbersLineArr.length; i++) {
 
 					String numberSplit = numbersLineArr[i];
+					List<Integer> groupd = new ArrayList<Integer>();
+
 					if (numberSplit.contains("-")) {
-						claimsNumbers.add(Integer.valueOf(numberSplit.split("-")[0].trim()));
-						claimsNumbers.add(Integer.valueOf(numberSplit.split("-")[1].trim()));
+
+						int start = Integer.valueOf(numberSplit.split("-")[0].trim());
+						int end = Integer.valueOf(numberSplit.split("-")[1].trim());
+						for (int m = start; m <= end; m++) {
+							groupd.add(m);
+						}
+
 					} else {
-						claimsNumbers.add(Integer.valueOf(numberSplit.replaceAll(",", "").trim()));
+						groupd.add(Integer.valueOf(numberSplit.replaceAll(",", "").trim()));
 					}
 
 					claimsNumbersAsStr.add(numberSplit.replaceAll(",", "").trim());
+					statueLine = str.substring(str.indexOf("U.S.C."), str.indexOf("as being")).replace("U.S.C.", "")
+							.replaceAll("\\(\\d+\\)", "");
+					claimsStatueAsStr.add(statueLine.trim());
+
+					referenceLine = str.substring(str.indexOf("referred to as"), str.lastIndexOf("'"))
+							.replace("referred to as", "");
+					claimsReferenceAsStr.add(referenceLine.trim());
+
+					pubNumLine = str.substring(str.lastIndexOf("'"), str.lastIndexOf(".")).replace("'", "");
+					claimsPubNumAsStr.add(pubNumLine.trim());
+
+					claimsNumbers.add(groupd);
 				}
+
 			}
 
-			int totalNumOfClaims = Collections.max(claimsNumbers);
+			List<Integer> allRejectedClaims = new ArrayList<Integer>();
+			for (List<Integer> innerList : claimsNumbers) {
+				for (Integer in : innerList) {
+					allRejectedClaims.add(in);
+				}
+			}
+			int totalNumOfClaims = Collections.max(allRejectedClaims);
 			applicationInfo.setTotalNumOfClaims(totalNumOfClaims);
 
 			List<Integer> allClaims = new ArrayList<Integer>();
@@ -85,22 +118,25 @@ public class ApplicationInfoController {
 				allClaims.add(i + 1);
 			}
 
-			allClaims.removeAll(claimsNumbers);
-			applicationInfo.setAllowedClaimsNumbers(allClaims.size());
+			List<Integer> allowedClaims = new ArrayList<Integer>();
+			for (List<Integer> innerList : claimsNumbers) {
+				allClaims.removeAll(innerList);
+			}
 
-			String allowedClaimsStr = "";
-			for (int i = 0; i < allClaims.size(); i++) {
-				if (i == allClaims.size() - 1) {
-					allowedClaimsStr += allClaims.get(i);
-				} else {
-					allowedClaimsStr += allClaims.get(i) + ",";
-				}
+			applicationInfo.setAllowedClaimsNumbers(allowedClaims.size());
+
+			String allowedClaimsStr = "0";
+			if (!allowedClaims.isEmpty()) {
+				allowedClaimsStr = groupNumbers(allowedClaims);
 			}
 
 			applicationInfo.setAllowableClaims(allowedClaimsStr);
 
 			applicationInfo.setClaimsNumbersAsStr(claimsNumbersAsStr);
 			applicationInfo.setGroupsClaimsTotal(claimsNumbersAsStr.size());
+			applicationInfo.setClaimsStatueAsStr(claimsStatueAsStr);
+			applicationInfo.setClaimsReferenceAsStr(claimsReferenceAsStr);
+			applicationInfo.setClaimsPubNumAsStr(claimsPubNumAsStr);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -109,17 +145,44 @@ public class ApplicationInfoController {
 		return new ResponseEntity<ApplicationInfo>(applicationInfo, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = { "/previewOutput" }, method = RequestMethod.POST)
-	public ModelAndView previewOutput(@Valid ApplicationInfo applicationInfo, BindingResult bindingResult) {
-		ModelAndView modelAndView = new ModelAndView();
+	public String groupNumbers(List<Integer> nums) {
 
-		if (bindingResult.hasErrors()) {
-			modelAndView.setViewName("applicationInfo");
-		} else {
-			modelAndView.setViewName("previewOutput");
+		Collections.sort(nums);
+		List<List<Integer>> ListMain = new ArrayList<>();
+		List<Integer> temp = new ArrayList<>();
+		temp.add(nums.get(0));
+
+		for (int i = 0; i < nums.size() - 1; i++) {
+			if (nums.get(i + 1) == nums.get(i) + 1) {
+				temp.add(nums.get(i + 1));
+			} else {
+				ListMain.add(temp);
+				temp = new ArrayList<>();
+				temp.add(nums.get(i + 1));
+			}
 		}
 
-		return modelAndView;
+		ListMain.add(temp);
+
+		String allowedClaimsStr = "";
+
+		for (List<Integer> innerList : ListMain) {
+			if (innerList.size() == 1) {
+				allowedClaimsStr += innerList.get(0) + ",";
+			} else {
+				allowedClaimsStr += innerList.get(0) + "-" + innerList.get(innerList.size() - 1) + ", ";
+			}
+		}
+
+		allowedClaimsStr = allowedClaimsStr.substring(0, allowedClaimsStr.length() - 1);
+
+		return allowedClaimsStr;
+	}
+
+	@RequestMapping(value = { "/generate" }, method = RequestMethod.POST)
+	public String generate(ApplicationInfo applicationInfo) {
+
+		return "redirect:/";
 	}
 
 	@RequestMapping(value = { "/saveAndGenerate" }, method = RequestMethod.POST)
