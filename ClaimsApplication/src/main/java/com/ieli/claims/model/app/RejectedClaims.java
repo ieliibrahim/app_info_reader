@@ -36,13 +36,6 @@ public class RejectedClaims {
 	@NotEmpty(message = "*Please provide publication number")
 	private String publicationNumber;
 
-	public RejectedClaims(@NotEmpty(message = "*Please provide claim numbers") Integer claimNumbers,
-			@NotEmpty(message = "*Please provide claim statue") String claimStatue) {
-		super();
-		this.claimNumbers = claimNumbers;
-		this.claimStatue = claimStatue;
-	}
-
 	public Integer getRejectedClaimsId() {
 		return rejectedClaimsId;
 	}

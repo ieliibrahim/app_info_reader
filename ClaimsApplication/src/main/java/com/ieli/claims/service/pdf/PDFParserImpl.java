@@ -78,9 +78,9 @@ public class PDFParserImpl implements IPDFParser {
 									String nonFinalOffice = finalOfficeLineArr[1].replaceAll("\r", "").trim();
 
 									if (finalOffice.startsWith("2a)K")) {
-										applicationInfo.setFinalOfficeAction(true);
+										applicationInfo.setFinalOfficeAction(1);
 									} else if (nonFinalOffice.startsWith("2b)K")) {
-										applicationInfo.setFinalOfficeAction(false);
+										applicationInfo.setFinalOfficeAction(0);
 									}
 								}
 							}

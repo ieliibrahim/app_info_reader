@@ -12,7 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
 
@@ -27,39 +26,31 @@ public class ApplicationInfo {
 	private Integer applicationId;
 
 	@Column(name = "application_for")
-	@NotEmpty(message = "*Please provide (For) input")
 	private String applicationFor;
 
 	@Column(name = "number")
-	@NotEmpty(message = "*Please provide number")
 	private String number;
 
 	@Column(name = "applicant")
-	@NotEmpty(message = "*Please provide applicant")
 	private String applicant;
 
 	@Column(name = "examiner")
-	@NotEmpty(message = "*Please provide examiner")
 	private String examiner;
 
 	@Column(name = "field_date")
-	@NotEmpty(message = "*Please provide field date")
 	private String fieldDate;
 
 	@Column(name = "group_art_unit")
-	@NotEmpty(message = "*Please provide group art unit")
 	private String groupArtUnit;
 
 	@Column(name = "confirmation_number")
-	@NotEmpty(message = "*Please provide confirmation number")
 	private String confirmationNumber;
 
 	@Column(name = "attorney_docket_number")
-	@NotEmpty(message = "*Please provide attorney docket number")
 	private String attorneyDocketNumber;
 
 	@Column(name = "is_final_office_action")
-	private boolean isFinalOfficeAction;
+	private int isFinalOfficeAction;
 
 	@Column(name = "filling_date")
 	private String fillingDate;
@@ -170,11 +161,11 @@ public class ApplicationInfo {
 		this.attorneyDocketNumber = attorneyDocketNumber;
 	}
 
-	public boolean isFinalOfficeAction() {
+	public int isFinalOfficeAction() {
 		return isFinalOfficeAction;
 	}
 
-	public void setFinalOfficeAction(boolean isFinalOfficeAction) {
+	public void setFinalOfficeAction(int isFinalOfficeAction) {
 		this.isFinalOfficeAction = isFinalOfficeAction;
 	}
 

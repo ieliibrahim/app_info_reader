@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-
-import javax.validation.Valid;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,16 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.ieli.claims.model.app.ApplicationInfo;
 import com.ieli.claims.model.app.Claim;
 import com.ieli.claims.model.app.RejectedClaims;
+import com.ieli.claims.repository.ApplicationInfoRepository;
 import com.ieli.claims.service.pdf.IPDFParser;
 
 @Controller
@@ -32,12 +30,21 @@ public class ApplicationInfoController {
 
 	@Autowired
 	private IPDFParser iPDFParser;
-
+	
 	@RequestMapping(value = { "/" }, method = RequestMethod.GET)
 	public String home(@RequestParam(name = "input", required = false) MultipartFile pdfFile, ModelMap model) {
 
 		ApplicationInfo applicationInfo = new ApplicationInfo();
-		applicationInfo.setClaim(new Claim(new LinkedHashSet<RejectedClaims>()));
+		
+		Claim claim = new Claim();
+		Set<RejectedClaims> rejectedClaims = new LinkedHashSet<RejectedClaims>();
+		RejectedClaims rc1 = new RejectedClaims();
+		RejectedClaims rc2 = new RejectedClaims();
+		rejectedClaims.add(rc1);
+		rejectedClaims.add(rc2);
+		claim.setRejectedClaims(rejectedClaims);
+		
+		applicationInfo.setClaim(claim);
 		model.addAttribute("applicationInfo", applicationInfo);
 
 		return "applicationInfo";
@@ -137,11 +144,13 @@ public class ApplicationInfoController {
 			applicationInfo.setClaimsStatueAsStr(claimsStatueAsStr);
 			applicationInfo.setClaimsReferenceAsStr(claimsReferenceAsStr);
 			applicationInfo.setClaimsPubNumAsStr(claimsPubNumAsStr);
-
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+		
 		return new ResponseEntity<ApplicationInfo>(applicationInfo, HttpStatus.OK);
 	}
 

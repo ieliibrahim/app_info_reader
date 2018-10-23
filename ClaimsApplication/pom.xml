@@ -9,7 +9,6 @@
 	<packaging>jar</packaging>
 
 	<name>ClaimsApplication</name>
-	<description>Demo project for Spring Boot</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -43,8 +42,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
