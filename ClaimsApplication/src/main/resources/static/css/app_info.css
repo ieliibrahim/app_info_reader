@@ -7,3 +7,8 @@
 	left: 10px;
 	top: 10px;
 }
+
+.modal-dialog {
+    max-width: 90%;
+    width: 90%;
+}

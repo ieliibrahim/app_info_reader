@@ -1,17 +1,17 @@
 package com.ieli.claims.model.app;
 
-import java.util.Set;
+import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+import javax.persistence.Transient;
 
 import lombok.Data;
 
@@ -26,36 +26,29 @@ public class Claim {
 	private Integer claimId;
 
 	@Column(name = "total_number")
-	@NotEmpty(message = "*Please provide total number of claims")
 	private Integer totalNumber;
 
 	@Column(name = "allowed_number")
-	@NotEmpty(message = "*Please provide allowed number of claims")
 	private Integer allowedNumber;
 
 	@Column(name = "objected_number")
-	@NotEmpty(message = "*Please provide objected number of claims")
 	private String objectedNumber;
 
 	@Column(name = "objected_statue")
-	@NotEmpty(message = "*Please provide objected statue of claims")
 	private String objectedStatue;
 
 	@Column(name = "allowable_claims")
-	@NotEmpty(message = "*Please provide allowable number of claims")
 	private String allowableClaims;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "claim_id")
-	private Set<RejectedClaims> rejectedClaims;
+	@OneToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(name = "application_id")
+	private ApplicationInfo applicationInfo;
+
+	@Transient
+	private List<RejectedClaims> rejectedClaims;
 
 	public Claim() {
 
-	}
-
-	public Claim(Set<RejectedClaims> rejectedClaims) {
-		super();
-		this.rejectedClaims = rejectedClaims;
 	}
 
 	public Integer getClaimId() {
@@ -106,11 +99,33 @@ public class Claim {
 		this.allowableClaims = allowableClaims;
 	}
 
-	public Set<RejectedClaims> getRejectedClaims() {
+	/**
+	 * @return the applicationInfo
+	 */
+	public ApplicationInfo getApplicationInfo() {
+		return applicationInfo;
+	}
+
+	/**
+	 * @param applicationInfo
+	 *            the applicationInfo to set
+	 */
+	public void setApplicationInfo(ApplicationInfo applicationInfo) {
+		this.applicationInfo = applicationInfo;
+	}
+
+	/**
+	 * @return the rejectedClaims
+	 */
+	public List<RejectedClaims> getRejectedClaims() {
 		return rejectedClaims;
 	}
 
-	public void setRejectedClaims(Set<RejectedClaims> rejectedClaims) {
+	/**
+	 * @param rejectedClaims
+	 *            the rejectedClaims to set
+	 */
+	public void setRejectedClaims(List<RejectedClaims> rejectedClaims) {
 		this.rejectedClaims = rejectedClaims;
 	}
 

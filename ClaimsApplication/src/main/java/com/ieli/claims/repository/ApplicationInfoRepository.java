@@ -6,4 +6,6 @@ import com.ieli.claims.model.app.ApplicationInfo;
 
 public interface ApplicationInfoRepository extends JpaRepository<ApplicationInfo, Integer> {
 
+	ApplicationInfo findByApplicationId(Integer appInfoId);
+
 }

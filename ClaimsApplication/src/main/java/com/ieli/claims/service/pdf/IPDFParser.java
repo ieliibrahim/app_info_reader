@@ -7,5 +7,5 @@ import com.ieli.claims.model.app.ApplicationInfo;
 
 public interface IPDFParser {
 
-	ApplicationInfo getPDFConent(InputStream inputStream) throws IOException;
+	ApplicationInfo getPDFConent(InputStream inputStreams) throws IOException;
 }

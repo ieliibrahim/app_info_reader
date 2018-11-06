@@ -2,14 +2,11 @@ package com.ieli.claims.model.app;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -54,10 +51,6 @@ public class ApplicationInfo {
 
 	@Column(name = "filling_date")
 	private String fillingDate;
-
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "application_id")
-	private Claim claim;
 
 	@Transient
 	private List<String> titles;
@@ -161,20 +154,12 @@ public class ApplicationInfo {
 		this.attorneyDocketNumber = attorneyDocketNumber;
 	}
 
-	public int isFinalOfficeAction() {
+	public int getFinalOfficeAction() {
 		return isFinalOfficeAction;
 	}
 
 	public void setFinalOfficeAction(int isFinalOfficeAction) {
 		this.isFinalOfficeAction = isFinalOfficeAction;
-	}
-
-	public Claim getClaim() {
-		return claim;
-	}
-
-	public void setClaim(Claim claim) {
-		this.claim = claim;
 	}
 
 	public String getFillingDate() {

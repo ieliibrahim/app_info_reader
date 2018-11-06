@@ -6,7 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
 
@@ -21,20 +20,19 @@ public class RejectedClaims {
 	private Integer rejectedClaimsId;
 
 	@Column(name = "claim_numbers")
-	@NotEmpty(message = "*Please provide claim numbers")
-	private Integer claimNumbers;
+	private String claimNumbers;
 
 	@Column(name = "claim_statue")
-	@NotEmpty(message = "*Please provide claim statue")
 	private String claimStatue;
 
 	@Column(name = "name")
-	@NotEmpty(message = "*Please provide reference name")
 	private String name;
 
 	@Column(name = "publication_number")
-	@NotEmpty(message = "*Please provide publication number")
 	private String publicationNumber;
+
+	@Column(name = "claim_id")
+	private Integer claimId;
 
 	public Integer getRejectedClaimsId() {
 		return rejectedClaimsId;
@@ -44,11 +42,11 @@ public class RejectedClaims {
 		this.rejectedClaimsId = rejectedClaimsId;
 	}
 
-	public Integer getClaimNumbers() {
+	public String getClaimNumbers() {
 		return claimNumbers;
 	}
 
-	public void setClaimNumbers(Integer claimNumbers) {
+	public void setClaimNumbers(String claimNumbers) {
 		this.claimNumbers = claimNumbers;
 	}
 
@@ -74,6 +72,21 @@ public class RejectedClaims {
 
 	public void setPublicationNumber(String publicationNumber) {
 		this.publicationNumber = publicationNumber;
+	}
+
+	/**
+	 * @return the claimId
+	 */
+	public Integer getClaimId() {
+		return claimId;
+	}
+
+	/**
+	 * @param claimId
+	 *            the claimId to set
+	 */
+	public void setClaimId(Integer claimId) {
+		this.claimId = claimId;
 	}
 
 }
