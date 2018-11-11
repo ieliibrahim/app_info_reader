@@ -70,7 +70,7 @@ public class ApplicationInfoController {
 		claim.setRejectedClaims(rejectedClaims);
 
 		model.addAttribute("claim", claim);
-		return "/index :: modalContent";
+		return "index :: modalContent";
 	}
 
 	@RequestMapping(value = {
