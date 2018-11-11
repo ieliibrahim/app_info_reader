@@ -34,9 +34,6 @@ public class ApplicationInfo {
 	@Column(name = "examiner")
 	private String examiner;
 
-	@Column(name = "field_date")
-	private String fieldDate;
-
 	@Column(name = "group_art_unit")
 	private String groupArtUnit;
 
@@ -52,11 +49,20 @@ public class ApplicationInfo {
 	@Column(name = "filling_date")
 	private String fillingDate;
 
-	@Transient
-	private List<String> titles;
+	@Column(name = "notification_date")
+	private String notificationDate;
+
+	@Column(name = "titles")
+	private String titles;
+
+	@Column(name = "sub_titles")
+	private String subTitles;
 
 	@Transient
-	private List<String> subTitles;
+	private List<String> titlesTrans;
+
+	@Transient
+	private List<String> subTitlesTrans;
 
 	@Transient
 	private int totalNumOfClaims;
@@ -122,14 +128,6 @@ public class ApplicationInfo {
 		this.examiner = examiner;
 	}
 
-	public String getFieldDate() {
-		return fieldDate;
-	}
-
-	public void setFieldDate(String fieldDate) {
-		this.fieldDate = fieldDate;
-	}
-
 	public String getGroupArtUnit() {
 		return groupArtUnit;
 	}
@@ -170,19 +168,19 @@ public class ApplicationInfo {
 		this.fillingDate = fillingDate;
 	}
 
-	public List<String> getTitles() {
+	public String getTitles() {
 		return titles;
 	}
 
-	public void setTitles(List<String> titles) {
+	public void setTitles(String titles) {
 		this.titles = titles;
 	}
 
-	public List<String> getSubTitles() {
+	public String getSubTitles() {
 		return subTitles;
 	}
 
-	public void setSubTitles(List<String> subTitles) {
+	public void setSubTitles(String subTitles) {
 		this.subTitles = subTitles;
 	}
 
@@ -248,6 +246,51 @@ public class ApplicationInfo {
 
 	public void setClaimsPubNumAsStr(List<String> claimsPubNumAsStr) {
 		this.claimsPubNumAsStr = claimsPubNumAsStr;
+	}
+
+	/**
+	 * @return the notificationDate
+	 */
+	public String getNotificationDate() {
+		return notificationDate;
+	}
+
+	/**
+	 * @param notificationDate
+	 *            the notificationDate to set
+	 */
+	public void setNotificationDate(String notificationDate) {
+		this.notificationDate = notificationDate;
+	}
+
+	/**
+	 * @return the titlesTrans
+	 */
+	public List<String> getTitlesTrans() {
+		return titlesTrans;
+	}
+
+	/**
+	 * @param titlesTrans
+	 *            the titlesTrans to set
+	 */
+	public void setTitlesTrans(List<String> titlesTrans) {
+		this.titlesTrans = titlesTrans;
+	}
+
+	/**
+	 * @return the subTitlesTrans
+	 */
+	public List<String> getSubTitlesTrans() {
+		return subTitlesTrans;
+	}
+
+	/**
+	 * @param subTitlesTrans
+	 *            the subTitlesTrans to set
+	 */
+	public void setSubTitlesTrans(List<String> subTitlesTrans) {
+		this.subTitlesTrans = subTitlesTrans;
 	}
 
 }

@@ -51,6 +51,11 @@ public class Claim {
 
 	}
 
+	public Claim(ApplicationInfo applicationInfo) {
+		super();
+		this.applicationInfo = applicationInfo;
+	}
+
 	public Integer getClaimId() {
 		return claimId;
 	}

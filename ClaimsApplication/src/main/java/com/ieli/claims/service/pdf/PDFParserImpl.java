@@ -52,7 +52,7 @@ public class PDFParserImpl implements IPDFParser {
 									String fieldDateLine = pageLines[s + 4];
 									String[] fieldDateLineArr = fieldDateLine
 											.split("                                   ");
-									applicationInfo.setFieldDate(fieldDateLineArr[0].replaceAll("\r", "").trim());
+									applicationInfo.setNotificationDate(fieldDateLineArr[0].replaceAll("\r", "").trim());
 
 								} else if (line.trim().startsWith("ATTORNEY DOCKET NO")) {
 
@@ -186,8 +186,20 @@ public class PDFParserImpl implements IPDFParser {
 			}
 		}
 
-		applicationInfo.setTitles(titles);
-		applicationInfo.setSubTitles(subTitles);
+		applicationInfo.setTitlesTrans(titles);
+		String titlesStr = "";
+		for(String title : titles) {
+			titlesStr += title + "app_new_line";
+		}
+		applicationInfo.setTitles(titlesStr);
+		
+		applicationInfo.setSubTitlesTrans(subTitles);
+		String subTitlesStr = "";
+		for(String subTitle : subTitles) {
+			subTitlesStr += subTitle + "app_new_line";
+		}
+		applicationInfo.setSubTitles(subTitlesStr);
+		
 	}
 
 }

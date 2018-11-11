@@ -1,17 +1,25 @@
 package com.ieli.claims.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +32,7 @@ import com.ieli.claims.model.app.RejectedClaims;
 import com.ieli.claims.repository.ApplicationInfoRepository;
 import com.ieli.claims.repository.ClaimsRepository;
 import com.ieli.claims.repository.RejectedClaimsRepository;
+import com.ieli.claims.service.output.DocXGenerator;
 import com.ieli.claims.service.pdf.IPDFParser;
 
 @Controller
@@ -47,30 +56,137 @@ public class ApplicationInfoController {
 		List<ApplicationInfo> applicationInfos = applicationInfoRepository
 				.findAll(new Sort(Sort.Direction.DESC, "applicationId"));
 		model.addAttribute("applicationInfos", applicationInfos);
+		model.addAttribute("claim", new Claim(new ApplicationInfo()));
 
 		return "index";
 	}
 
 	@RequestMapping(value = {
 			"/getAppInfo/{appInfoId}" }, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<Claim> getAppInfo(@PathVariable(name = "appInfoId") Integer appInfoId, Model model) {
+	public String getAppInfo(@PathVariable(name = "appInfoId") Integer appInfoId, Model model) {
 
 		Claim claim = claimsRepository.findByApplicationInfoApplicationId(appInfoId);
 		List<RejectedClaims> rejectedClaims = rejectedClaimsRepository.findByClaimId(claim.getClaimId());
 		claim.setRejectedClaims(rejectedClaims);
 
-		return new ResponseEntity<Claim>(claim, HttpStatus.OK);
+		model.addAttribute("claim", claim);
+		return "/index :: modalContent";
 	}
 
 	@RequestMapping(value = {
 			"/generateDoc/{appInfoId}" }, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<Claim> generateDoc(@PathVariable(name = "appInfoId") Integer appInfoId, Model model) {
+	public String generateDoc(HttpServletRequest req, HttpServletResponse response, @ModelAttribute Claim claim,
+			@PathVariable(name = "appInfoId") Integer appInfoId, Model model) {
+
+		File file = null;
+
+		ApplicationInfo dbApplicationInfo = applicationInfoRepository.getOne(appInfoId);
+		dbApplicationInfo.setAllowableClaims(claim.getApplicationInfo().getAllowableClaims());
+		dbApplicationInfo.setAllowedClaimsNumbers(claim.getApplicationInfo().getAllowedClaimsNumbers());
+		dbApplicationInfo.setApplicant(claim.getApplicationInfo().getApplicant());
+		dbApplicationInfo.setApplicationFor(claim.getApplicationInfo().getApplicationFor());
+		dbApplicationInfo.setAttorneyDocketNumber(claim.getApplicationInfo().getAttorneyDocketNumber());
+		dbApplicationInfo.setConfirmationNumber(claim.getApplicationInfo().getConfirmationNumber());
+		dbApplicationInfo.setExaminer(claim.getApplicationInfo().getExaminer());
+		dbApplicationInfo.setFillingDate(claim.getApplicationInfo().getFillingDate());
+		dbApplicationInfo.setGroupArtUnit(claim.getApplicationInfo().getGroupArtUnit());
+		dbApplicationInfo.setNotificationDate(claim.getApplicationInfo().getNotificationDate());
+		dbApplicationInfo.setNumber(claim.getApplicationInfo().getNumber());
+		dbApplicationInfo.setSubTitles(claim.getApplicationInfo().getTitles());
+		dbApplicationInfo.setSubTitles(claim.getApplicationInfo().getSubTitles());
+		dbApplicationInfo.setTotalNumOfClaims(claim.getApplicationInfo().getTotalNumOfClaims());
+		applicationInfoRepository.save(dbApplicationInfo);
+
+		Claim dbClaim = claimsRepository.getOne(claim.getClaimId());
+		dbClaim.setAllowableClaims(claim.getAllowableClaims());
+		dbClaim.setAllowedNumber(claim.getAllowedNumber());
+		dbClaim.setApplicationInfo(dbApplicationInfo);
+		dbClaim.setObjectedNumber(claim.getObjectedNumber());
+		dbClaim.setObjectedStatue(claim.getObjectedStatue());
+		dbClaim.setTotalNumber(claim.getTotalNumber());
+		claimsRepository.save(dbClaim);
+
+		for (RejectedClaims rejectedClaim : claim.getRejectedClaims()) {
+			RejectedClaims dbRejectedClaims = rejectedClaimsRepository.getOne(rejectedClaim.getRejectedClaimsId());
+			dbRejectedClaims.setClaimId(dbClaim.getClaimId());
+			dbRejectedClaims.setClaimNumbers(rejectedClaim.getClaimNumbers());
+			dbRejectedClaims.setClaimStatue(rejectedClaim.getClaimStatue());
+			dbRejectedClaims.setName(rejectedClaim.getName());
+			dbRejectedClaims.setPublicationNumber(rejectedClaim.getPublicationNumber());
+			rejectedClaimsRepository.save(dbRejectedClaims);
+		}
+
+		DocXGenerator docXGenerator = new DocXGenerator();
+		try {
+			file = File.createTempFile("res_cliams_" + Calendar.getInstance().getTimeInMillis(), ".docx");
+			docXGenerator.generateDocX(claim, file.getAbsolutePath());
+
+			InputStream in = new FileInputStream(file);
+
+			response.setContentType("application/octet-stream");
+			response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
+			response.setHeader("Content-Length", String.valueOf(file.length()));
+			FileCopyUtils.copy(in, response.getOutputStream());
+			response.flushBuffer();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidFormatException e) {
+			e.printStackTrace();
+		}
+
+		return "resDoc";
+	}
+
+	@RequestMapping(value = {
+			"/generateImmDoc/{appInfoId}" }, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public String generateImmDoc(HttpServletRequest req, HttpServletResponse response,
+			@PathVariable(name = "appInfoId") Integer appInfoId) {
+
+		File file = null;
+
+		ApplicationInfo dbApplicationInfo = applicationInfoRepository.getOne(appInfoId);
+		Claim dbClaim = claimsRepository.findByApplicationInfoApplicationId(appInfoId);
+		dbClaim.setApplicationInfo(dbApplicationInfo);
+		dbClaim.setRejectedClaims(rejectedClaimsRepository.findByClaimId(dbClaim.getClaimId()));
+
+		DocXGenerator docXGenerator = new DocXGenerator();
+		try {
+			file = File.createTempFile("res_cliams_" + Calendar.getInstance().getTimeInMillis(), ".docx");
+			docXGenerator.generateDocX(dbClaim, file.getAbsolutePath());
+
+			InputStream in = new FileInputStream(file);
+
+			response.setContentType("application/octet-stream");
+			response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
+			response.setHeader("Content-Length", String.valueOf(file.length()));
+			FileCopyUtils.copy(in, response.getOutputStream());
+			response.flushBuffer();
+			
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidFormatException e) {
+			e.printStackTrace();
+		}
+
+		return "resDocImm";
+	}
+
+	@RequestMapping(value = { "/deleteDoc/{appInfoId}" }, method = RequestMethod.POST)
+	public String deleteDoc(@PathVariable(name = "appInfoId") Integer appInfoId) {
+
+		ApplicationInfo dbApplicationInfo = applicationInfoRepository.getOne(appInfoId);
 
 		Claim claim = claimsRepository.findByApplicationInfoApplicationId(appInfoId);
-		List<RejectedClaims> rejectedClaims = rejectedClaimsRepository.findByClaimId(claim.getClaimId());
-		claim.setRejectedClaims(rejectedClaims);
+		List<RejectedClaims> rejClaims = rejectedClaimsRepository.findByClaimId(claim.getClaimId());
+		for (RejectedClaims rejectedClaim : rejClaims) {
+			rejectedClaimsRepository.delete(rejectedClaim);
+		}
+		claimsRepository.delete(claim);
+		applicationInfoRepository.delete(dbApplicationInfo);
 
-		return new ResponseEntity<Claim>(claim, HttpStatus.OK);
+		return "redirect:/index";
 	}
 
 	@RequestMapping(value = {
@@ -95,7 +211,7 @@ public class ApplicationInfoController {
 				String referenceLine = "";
 				String pubNumLine = "";
 				String[] numbersLineArr = null;
-				for (String str : applicationInfo.getSubTitles()) {
+				for (String str : applicationInfo.getSubTitlesTrans()) {
 
 					claimsLine = str.substring(str.indexOf("Claims"), str.indexOf("are rejected")).replace("and", "")
 							.replaceAll("Claims", "");

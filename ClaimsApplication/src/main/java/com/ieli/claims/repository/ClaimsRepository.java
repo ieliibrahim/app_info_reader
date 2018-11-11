@@ -8,4 +8,5 @@ public interface ClaimsRepository extends JpaRepository<Claim, Integer> {
 
 	Claim findByApplicationInfoApplicationId(Integer appInfoId);
 
+
 }
